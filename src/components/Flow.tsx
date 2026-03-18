@@ -12,12 +12,13 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { toPng } from 'html-to-image';
-import { Download, Save, Upload, Trash2, Loader2, Sparkles, Wand2, Plus, X, Copy, ClipboardPaste, Undo2, Redo2 } from 'lucide-react';
+import { Download, Save, Upload, Trash2, Loader2, Sparkles, Wand2, Plus, X, Copy, ClipboardPaste, Undo2, Redo2, Key } from 'lucide-react';
 
 import Sidebar from './Sidebar';
 import PageNode from './nodes/PageNode';
 import CategoryNode from './nodes/CategoryNode';
 import LinkNode from './nodes/LinkNode';
+import ApiKeyModal from './ApiKeyModal';
 import { getLayoutedElements } from '../utils/layout';
 import { generateSitemapFromUrl } from '../services/geminiService';
 
@@ -63,6 +64,7 @@ export default function Flow() {
   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
   const [url, setUrl] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
 
   // Sync current nodes/edges to the active project
   useEffect(() => {
@@ -430,9 +432,14 @@ export default function Flow() {
         reactFlowInstance?.fitView({ duration: 800, padding: 0.2 });
       }, 100);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to generate sitemap:", error);
-      alert("Failed to generate sitemap. Please check the console for details.");
+      if (error.message === "API_KEY_MISSING") {
+        alert("Please set your Gemini API Key in the settings (Key icon) first.");
+        setIsApiKeyModalOpen(true);
+      } else {
+        alert("Failed to generate sitemap. Please check the console for details.");
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -500,6 +507,13 @@ export default function Flow() {
             >
               {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               Generate
+            </button>
+            <button
+              onClick={() => setIsApiKeyModalOpen(true)}
+              className="flex items-center justify-center w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition-colors"
+              title="API Key Settings"
+            >
+              <Key className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -605,6 +619,7 @@ export default function Flow() {
           </ReactFlow>
         </div>
       </div>
+      <ApiKeyModal isOpen={isApiKeyModalOpen} onClose={() => setIsApiKeyModalOpen(false)} />
     </div>
   );
 }

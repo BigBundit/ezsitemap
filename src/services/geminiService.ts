@@ -2,7 +2,14 @@ import { GoogleGenAI, Type } from "@google/genai";
 
 export async function generateSitemapFromUrl(url: string) {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const storedKey = localStorage.getItem('GEMINI_API_KEY');
+    const apiKey = storedKey || process.env.GEMINI_API_KEY;
+    
+    if (!apiKey) {
+      throw new Error("API_KEY_MISSING");
+    }
+
+    const ai = new GoogleGenAI({ apiKey });
     
     const prompt = `Read the content of this exact URL: ${url}. 
     Extract ONLY the MAIN NAVIGATION MENU (header menu, sidebar menu) and its direct sub-menus found on the page. 
