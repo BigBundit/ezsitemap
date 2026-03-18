@@ -1,0 +1,5 @@
+{
+  "name": "Sitemap & Mindmap Builder",
+  "description": "A drag-and-drop tool to easily create sitemaps and mindmaps, with export to JSON and PNG.",
+  "requestFramePermissions": []
+}
