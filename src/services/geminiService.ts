@@ -5,7 +5,7 @@ export async function generateSitemapFromUrl(url: string) {
     const storedKey = localStorage.getItem('GEMINI_API_KEY');
     const apiKey = storedKey || process.env.GEMINI_API_KEY;
     
-    if (!apiKey) {
+    if (!apiKey || apiKey === 'undefined' || apiKey === 'null') {
       throw new Error("API_KEY_MISSING");
     }
 
@@ -28,7 +28,7 @@ export async function generateSitemapFromUrl(url: string) {
     Limit the output to 10-25 essential nodes to keep the diagram clean but comprehensive. Make sure the hierarchy perfectly matches the actual website's main menu structure.`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-3.1-pro-preview",
+      model: "gemini-3-flash-preview",
       contents: prompt,
       config: {
         tools: [{ urlContext: {} }],
@@ -53,9 +53,16 @@ export async function generateSitemapFromUrl(url: string) {
       throw new Error("No response from AI");
     }
 
-    return JSON.parse(response.text);
-  } catch (error) {
+    const data = JSON.parse(response.text);
+    if (!data || data.length === 0) {
+      throw new Error("NO_DATA_FOUND");
+    }
+    return data;
+  } catch (error: any) {
     console.error("Error generating sitemap:", error);
+    if (error.message?.includes("API key not valid") || error.status === 403 || (error.status === 400 && error.message?.includes("API key"))) {
+      throw new Error("INVALID_API_KEY");
+    }
     throw error;
   }
 }

@@ -437,8 +437,13 @@ export default function Flow() {
       if (error.message === "API_KEY_MISSING") {
         alert("Please set your Gemini API Key in the settings (Key icon) first.");
         setIsApiKeyModalOpen(true);
+      } else if (error.message === "INVALID_API_KEY" || error.message?.includes("API key not valid")) {
+        alert("The API key you entered is invalid. Please check your key and try again.");
+        setIsApiKeyModalOpen(true);
+      } else if (error.message === "NO_DATA_FOUND") {
+        alert("Could not extract a menu structure from this URL. The site might be blocking access or doesn't have a clear navigation menu.");
       } else {
-        alert("Failed to generate sitemap. Please check the console for details.");
+        alert(`Error: ${error.message || "Failed to generate sitemap"}\n\nPlease check the console for details.`);
       }
     } finally {
       setIsGenerating(false);
