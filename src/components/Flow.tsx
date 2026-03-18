@@ -12,15 +12,16 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { toPng } from 'html-to-image';
-import { Download, Save, Upload, Trash2, Loader2, Sparkles, Wand2, Plus, X, Copy, ClipboardPaste, Undo2, Redo2, Key } from 'lucide-react';
+import { Download, Save, Upload, Trash2, Loader2, Sparkles, Wand2, Plus, X, Copy, ClipboardPaste, Undo2, Redo2, Key, FileText } from 'lucide-react';
 
 import Sidebar from './Sidebar';
 import PageNode from './nodes/PageNode';
 import CategoryNode from './nodes/CategoryNode';
 import LinkNode from './nodes/LinkNode';
 import ApiKeyModal from './ApiKeyModal';
+import ImportTextModal from './ImportTextModal';
 import { getLayoutedElements } from '../utils/layout';
-import { generateSitemapFromUrl } from '../services/geminiService';
+import { generateSitemapFromUrl, generateSitemapFromText } from '../services/geminiService';
 
 const initialNodes: Node[] = [
   {
@@ -65,6 +66,7 @@ export default function Flow() {
   const [url, setUrl] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
+  const [isImportTextModalOpen, setIsImportTextModalOpen] = useState(false);
 
   // Sync current nodes/edges to the active project
   useEffect(() => {
@@ -450,6 +452,57 @@ export default function Flow() {
     }
   };
 
+  const handleGenerateFromText = async (text: string) => {
+    setIsGenerating(true);
+    try {
+      const nodesData = await generateSitemapFromText(text);
+
+      const newNodes: Node[] = nodesData.map((node: any) => ({
+        id: node.id,
+        type: node.type,
+        position: { x: 0, y: 0 },
+        data: { label: node.label },
+      }));
+
+      const newEdges: Edge[] = nodesData
+        .filter((node: any) => node.parentId)
+        .map((node: any) => ({
+          id: `e${node.parentId}-${node.id}`,
+          source: node.parentId,
+          target: node.id,
+          type: 'smoothstep',
+          animated: true,
+          style: { stroke: '#94a3b8', strokeWidth: 2 },
+        }));
+
+      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(newNodes, newEdges);
+
+      setNodes(layoutedNodes);
+      setEdges(layoutedEdges);
+
+      setTimeout(() => {
+        reactFlowInstance?.fitView({ duration: 800, padding: 0.2 });
+      }, 100);
+
+    } catch (error: any) {
+      console.error("Failed to generate sitemap from text:", error);
+      if (error.message === "API_KEY_MISSING") {
+        alert("Please set your Gemini API Key in the settings (Key icon) first.");
+        setIsApiKeyModalOpen(true);
+      } else if (error.message === "INVALID_API_KEY" || error.message?.includes("API key not valid")) {
+        alert("The API key you entered is invalid. Please check your key and try again.");
+        setIsApiKeyModalOpen(true);
+      } else if (error.message === "NO_DATA_FOUND") {
+        alert("Could not extract a menu structure from this text. Please check your formatting.");
+      } else {
+        alert(`Error: ${error.message || "Failed to generate sitemap"}\n\nPlease check the console for details.`);
+      }
+      throw error;
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
     <div className="flex h-screen w-full flex-col bg-slate-50">
       {/* Tab Bar */}
@@ -512,6 +565,14 @@ export default function Flow() {
             >
               {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               Generate
+            </button>
+            <div className="w-px h-6 bg-slate-300 mx-1"></div>
+            <button
+              onClick={() => setIsImportTextModalOpen(true)}
+              className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition-colors text-sm font-medium shadow-sm border border-slate-200"
+            >
+              <FileText className="w-4 h-4" />
+              Import Text
             </button>
             <button
               onClick={() => setIsApiKeyModalOpen(true)}
@@ -625,6 +686,11 @@ export default function Flow() {
         </div>
       </div>
       <ApiKeyModal isOpen={isApiKeyModalOpen} onClose={() => setIsApiKeyModalOpen(false)} />
+      <ImportTextModal 
+        isOpen={isImportTextModalOpen} 
+        onClose={() => setIsImportTextModalOpen(false)} 
+        onImport={handleGenerateFromText}
+      />
     </div>
   );
 }
