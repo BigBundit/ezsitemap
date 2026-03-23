@@ -73,6 +73,7 @@ export default function Flow() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
   const [isImportTextModalOpen, setIsImportTextModalOpen] = useState(false);
+  const [layoutDirection, setLayoutDirection] = useState<'TB' | 'LR'>('TB');
 
   // Sync current nodes/edges to the active project
   useEffect(() => {
@@ -389,11 +390,14 @@ export default function Flow() {
     event.target.value = '';
   };
 
-  const handleAutoLayout = useCallback(() => {
+  const handleAutoLayout = useCallback((direction: 'TB' | 'LR') => {
+    setLayoutDirection(direction);
+    
     takeSnapshot();
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       nodes,
-      edges
+      edges,
+      direction
     );
 
     setNodes([...layoutedNodes]);
@@ -434,7 +438,8 @@ export default function Flow() {
 
       const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
         newNodes,
-        newEdges
+        newEdges,
+        layoutDirection
       );
 
       setNodes(layoutedNodes);
@@ -485,7 +490,7 @@ export default function Flow() {
           style: { stroke: '#94a3b8', strokeWidth: 2 },
         }));
 
-      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(newNodes, newEdges);
+      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(newNodes, newEdges, layoutDirection);
 
       setNodes(layoutedNodes);
       setEdges(layoutedEdges);
@@ -628,12 +633,20 @@ export default function Flow() {
           </button>
           <div className="w-px h-6 bg-slate-200 my-auto mx-1"></div>
           <button
-            onClick={handleAutoLayout}
-            className="flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition-colors text-sm font-medium"
-            title="Auto Layout"
+            onClick={() => handleAutoLayout('TB')}
+            className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors text-sm font-medium ${layoutDirection === 'TB' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}`}
+            title="Vertical Layout"
           >
             <Wand2 className="w-4 h-4" />
-            Layout
+            Layout ↓
+          </button>
+          <button
+            onClick={() => handleAutoLayout('LR')}
+            className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors text-sm font-medium ${layoutDirection === 'LR' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}`}
+            title="Horizontal Layout"
+          >
+            <Wand2 className="w-4 h-4" />
+            Layout →
           </button>
           <div className="w-px h-6 bg-slate-200 my-auto mx-1"></div>
           <label className="flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md cursor-pointer transition-colors text-sm font-medium">
