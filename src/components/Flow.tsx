@@ -9,6 +9,8 @@ import {
   Connection,
   Edge,
   Node,
+  getNodesBounds,
+  getViewportForBounds,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { toPng } from 'html-to-image';
@@ -358,26 +360,46 @@ export default function Flow() {
   };
 
   const exportPng = () => {
-    if (reactFlowWrapper.current) {
-      // Temporarily hide controls for export
-      const controls = document.querySelector('.react-flow__controls') as HTMLElement;
-      if (controls) controls.style.display = 'none';
+    if (nodes.length === 0) return;
 
-      toPng(reactFlowWrapper.current, { backgroundColor: '#f8fafc' })
-        .then((dataUrl) => {
-          const downloadAnchorNode = document.createElement('a');
-          downloadAnchorNode.setAttribute("href", dataUrl);
-          downloadAnchorNode.setAttribute("download", `sitemap_${activeProjectId}.png`);
-          document.body.appendChild(downloadAnchorNode);
-          downloadAnchorNode.click();
-          downloadAnchorNode.remove();
-          if (controls) controls.style.display = 'flex';
-        })
-        .catch((err) => {
-          console.error('oops, something went wrong!', err);
-          if (controls) controls.style.display = 'flex';
-        });
-    }
+    const nodesBounds = getNodesBounds(nodes);
+    const imageWidth = nodesBounds.width + 200;
+    const imageHeight = nodesBounds.height + 200;
+
+    const viewport = getViewportForBounds(
+      nodesBounds,
+      imageWidth,
+      imageHeight,
+      0.1,
+      10,
+      0.1
+    );
+
+    const viewportElement = reactFlowWrapper.current?.querySelector('.react-flow__viewport') as HTMLElement;
+    if (!viewportElement) return;
+
+    toPng(viewportElement, {
+      backgroundColor: '#f8fafc',
+      width: imageWidth,
+      height: imageHeight,
+      style: {
+        width: `${imageWidth}px`,
+        height: `${imageHeight}px`,
+        transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
+      },
+      pixelRatio: 3, // High resolution
+    })
+      .then((dataUrl) => {
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataUrl);
+        downloadAnchorNode.setAttribute("download", `sitemap_${activeProjectId}.png`);
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+      })
+      .catch((err) => {
+        console.error('oops, something went wrong!', err);
+      });
   };
 
   const clearCanvas = () => {
