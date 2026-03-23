@@ -18,6 +18,9 @@ import Sidebar from './Sidebar';
 import PageNode from './nodes/PageNode';
 import CategoryNode from './nodes/CategoryNode';
 import LinkNode from './nodes/LinkNode';
+import TagNode from './nodes/TagNode';
+import TextNode from './nodes/TextNode';
+import LineNode from './nodes/LineNode';
 import ApiKeyModal from './ApiKeyModal';
 import ImportTextModal from './ImportTextModal';
 import { getLayoutedElements } from '../utils/layout';
@@ -36,6 +39,9 @@ const nodeTypes = {
   pageNode: PageNode,
   categoryNode: CategoryNode,
   linkNode: LinkNode,
+  tagNode: TagNode,
+  textNode: TextNode,
+  lineNode: LineNode,
 };
 
 let id = 0;
@@ -292,10 +298,14 @@ export default function Flow() {
       event.preventDefault();
 
       const type = event.dataTransfer.getData('application/reactflow');
-      const label = event.dataTransfer.getData('application/reactflow-label');
+      let label = event.dataTransfer.getData('application/reactflow-label');
 
       if (typeof type === 'undefined' || !type) {
         return;
+      }
+
+      if (!label && type !== 'lineNode') {
+        label = 'New Node';
       }
 
       const position = reactFlowInstance.screenToFlowPosition({
@@ -306,7 +316,7 @@ export default function Flow() {
         id: getId(),
         type,
         position,
-        data: { label: label || `New Node` },
+        data: { label },
       };
 
       takeSnapshot();

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Folder, Link as LinkIcon } from 'lucide-react';
+import { FileText, Folder, Link as LinkIcon, Tag, Type, Minus } from 'lucide-react';
 
 export default function Sidebar() {
   const onDragStart = (event: React.DragEvent, nodeType: string, label: string) => {
@@ -42,6 +42,35 @@ export default function Sidebar() {
       >
         <LinkIcon className="w-5 h-5 text-amber-500" />
         <span>Link</span>
+      </div>
+
+      <div className="border-t border-slate-100 my-1"></div>
+
+      <div
+        className="flex items-center gap-3 px-4 py-3 shadow-sm rounded-lg bg-white border border-slate-200 cursor-grab hover:border-indigo-300 hover:shadow-md transition-all font-medium text-slate-700"
+        onDragStart={(event) => onDragStart(event, 'tagNode', 'Tag')}
+        draggable
+      >
+        <Tag className="w-5 h-5 text-indigo-400" />
+        <span>Tag</span>
+      </div>
+
+      <div
+        className="flex items-center gap-3 px-4 py-3 shadow-sm rounded-lg bg-white border border-slate-200 cursor-grab hover:border-slate-400 hover:shadow-md transition-all font-medium text-slate-700"
+        onDragStart={(event) => onDragStart(event, 'textNode', 'Text')}
+        draggable
+      >
+        <Type className="w-5 h-5 text-slate-500" />
+        <span>Text</span>
+      </div>
+
+      <div
+        className="flex items-center gap-3 px-4 py-3 shadow-sm rounded-lg bg-white border border-slate-200 cursor-grab hover:border-slate-400 hover:shadow-md transition-all font-medium text-slate-700"
+        onDragStart={(event) => onDragStart(event, 'lineNode', '')}
+        draggable
+      >
+        <Minus className="w-5 h-5 text-slate-500" />
+        <span>Line</span>
       </div>
 
       <div className="mt-auto pt-4 border-t border-slate-100">
