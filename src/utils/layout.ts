@@ -14,9 +14,10 @@ export const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'T
   // Configure dagre layout
   dagreGraph.setGraph({ 
     rankdir: direction, 
-    nodesep: 60, // horizontal spacing between nodes
-    ranksep: 100, // vertical spacing between ranks
-    align: 'DL' // alignment
+    nodesep: 100, // increased horizontal spacing between nodes
+    edgesep: 80,  // added edge separation
+    ranksep: 150, // increased vertical spacing between ranks
+    // align: 'DL' // removed alignment to allow default centering which reduces overlaps
   });
 
   // Add nodes to dagre
@@ -50,5 +51,17 @@ export const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'T
     return newNode;
   });
 
-  return { nodes: newNodes, edges };
+  const newEdges = edges.map((edge) => {
+    const newEdge = { ...edge };
+    if (isHorizontal) {
+      newEdge.sourceHandle = 'right';
+      newEdge.targetHandle = 'left';
+    } else {
+      delete newEdge.sourceHandle;
+      delete newEdge.targetHandle;
+    }
+    return newEdge;
+  });
+
+  return { nodes: newNodes, edges: newEdges };
 };

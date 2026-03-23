@@ -17,9 +17,11 @@ export default function LineNode({ id, isConnectable, selected }: any) {
         </button>
       </NodeToolbar>
       <div className={`group py-4 px-2 min-w-[200px] flex items-center justify-center cursor-pointer transition-all ${selected ? 'ring-2 ring-slate-400 rounded-md bg-white/50' : ''}`}>
-        <Handle type="target" position={Position.Left} isConnectable={isConnectable} className="w-2 h-2 !bg-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <Handle type="target" position={Position.Top} isConnectable={isConnectable} className="w-2 h-2 !bg-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <Handle type="target" position={Position.Left} id="left" isConnectable={isConnectable} className="w-2 h-2 !bg-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
         <div className="w-full h-[2px] bg-slate-400 group-hover:bg-slate-500 transition-colors"></div>
-        <Handle type="source" position={Position.Right} isConnectable={isConnectable} className="w-2 h-2 !bg-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <Handle type="source" position={Position.Bottom} isConnectable={isConnectable} className="w-2 h-2 !bg-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <Handle type="source" position={Position.Right} id="right" isConnectable={isConnectable} className="w-2 h-2 !bg-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
     </>
   );

@@ -44,6 +44,17 @@ const nodeTypes = {
   lineNode: LineNode,
 };
 
+const EDGE_COLORS = [
+  '#6366f1', // indigo-500
+  '#10b981', // emerald-500
+  '#f59e0b', // amber-500
+  '#ef4444', // red-500
+  '#06b6d4', // cyan-500
+  '#d946ef', // fuchsia-500
+  '#8b5cf6', // violet-500
+  '#f97316', // orange-500
+];
+
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 
@@ -284,7 +295,15 @@ export default function Flow() {
   const onConnect = useCallback(
     (params: Connection | Edge) => {
       takeSnapshot();
-      setEdges((eds) => addEdge(params, eds));
+      setEdges((eds) => {
+        const colorIndex = eds.length % EDGE_COLORS.length;
+        const newEdge = {
+          ...params,
+          type: 'bezier',
+          style: { stroke: EDGE_COLORS[colorIndex], strokeWidth: 2 },
+        };
+        return addEdge(newEdge, eds);
+      });
     },
     [setEdges, takeSnapshot],
   );
@@ -428,10 +447,13 @@ export default function Flow() {
         });
 
         if (item.parentId && item.parentId !== "") {
+          const colorIndex = newEdges.length % EDGE_COLORS.length;
           newEdges.push({
             id: `e${item.parentId}-${item.id}`,
             source: item.parentId,
             target: item.id,
+            type: 'bezier',
+            style: { stroke: EDGE_COLORS[colorIndex], strokeWidth: 2 },
           });
         }
       });
@@ -481,13 +503,12 @@ export default function Flow() {
 
       const newEdges: Edge[] = nodesData
         .filter((node: any) => node.parentId)
-        .map((node: any) => ({
+        .map((node: any, index: number) => ({
           id: `e${node.parentId}-${node.id}`,
           source: node.parentId,
           target: node.id,
-          type: 'smoothstep',
-          animated: true,
-          style: { stroke: '#94a3b8', strokeWidth: 2 },
+          type: 'bezier',
+          style: { stroke: EDGE_COLORS[index % EDGE_COLORS.length], strokeWidth: 2 },
         }));
 
       const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(newNodes, newEdges, layoutDirection);
@@ -697,10 +718,8 @@ export default function Flow() {
             selectionOnDrag={true} // Left mouse button to select (marquee)
             className="bg-slate-50"
             defaultEdgeOptions={{
-              type: 'smoothstep',
-              animated: true,
-              style: { stroke: '#94a3b8', strokeWidth: 2 },
-              pathOptions: { borderRadius: 24 }
+              type: 'bezier',
+              style: { stroke: '#475569', strokeWidth: 2 },
             }}
           >
             <Controls />

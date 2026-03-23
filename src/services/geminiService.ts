@@ -91,8 +91,14 @@ export async function generateSitemapFromText(text: string) {
 
     Each node must have:
     - id: unique string (e.g., "1", "2", "3")
-    - label: string (title of the menu item)
-    - type: string (must be exactly one of: "pageNode", "categoryNode", "linkNode". Use categoryNode for items with children, pageNode for others.)
+    - label: string (title of the menu item, remove any markdown symbols like # or - if they are just for formatting, but keep them if they are part of the name like a #hashtag)
+    - type: string (must be exactly one of: "pageNode", "categoryNode", "linkNode", "tagNode", "textNode", "lineNode"). 
+      * Use "tagNode" if the text starts with '#' or explicitly mentions it's a tag.
+      * Use "linkNode" if the text is a URL or explicitly mentions it's a link.
+      * Use "textNode" if the text is a long description, note, or plain paragraph.
+      * Use "categoryNode" for items that act as folders or group other items.
+      * Use "lineNode" if the text represents a divider or separator.
+      * Use "pageNode" for standard pages or items.
     - parentId: string (ID of the parent node. Use an empty string "" for the root node. There must be exactly one root node.)
 
     Limit the output to essential nodes to keep the diagram clean but comprehensive. Make sure the hierarchy perfectly matches the provided text.`;

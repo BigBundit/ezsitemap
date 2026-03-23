@@ -41,13 +41,22 @@ export default function ImportTextModal({ isOpen, onClose, onImport }: ImportTex
           </button>
         </div>
         <div className="p-6">
-          <p className="text-sm text-slate-600 mb-4">
+          <p className="text-sm text-slate-600 mb-2">
             Paste your outline here. Use headings, bullet points, or indentation to show the hierarchy. Our AI will automatically convert it into a sitemap.
           </p>
+          <div className="text-xs text-slate-500 mb-4 bg-slate-100 p-3 rounded-md">
+            <strong>Pro Tip:</strong> You can create specific elements by using patterns:
+            <ul className="list-disc pl-5 mt-1 space-y-1">
+              <li>Use <code>#tagname</code> to create a Tag element</li>
+              <li>Use URLs like <code>https://...</code> to create a Link element</li>
+              <li>Write long descriptions to create a Text element</li>
+              <li>Use <code>---</code> to create a Line/Divider</li>
+            </ul>
+          </div>
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder={`Home\n- About Us\n  - Our Team\n  - History\n- Services\n  - Web Design\n  - SEO\n- Contact`}
+            placeholder={`Home\n- About Us\n  - Our Team\n  - History\n- Services\n  - Web Design\n  - SEO\n- Contact\n\n#marketing\nhttps://example.com/contact\n---`}
             className="w-full h-64 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 font-mono text-sm resize-none"
           />
           <div className="flex justify-end gap-3">

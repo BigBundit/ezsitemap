@@ -34,6 +34,7 @@ export default function TagNode({ id, data, isConnectable, selected }: any) {
       </NodeToolbar>
       <div className={`group flex items-center gap-2 px-3 py-1.5 shadow-sm rounded-full bg-indigo-50 border-2 transition-colors ${selected ? 'border-indigo-500 ring-4 ring-indigo-500/20' : 'border-indigo-200 hover:border-indigo-300'}`}>
         <Handle type="target" position={Position.Top} isConnectable={isConnectable} className="w-2 h-2 !bg-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <Handle type="target" position={Position.Left} id="left" isConnectable={isConnectable} className="w-2 h-2 !bg-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity" />
         <Tag className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
         <input
           ref={inputRef}
@@ -45,6 +46,7 @@ export default function TagNode({ id, data, isConnectable, selected }: any) {
           style={{ width: `${Math.max(40, (data.label?.length || 3) * 8)}px` }}
         />
         <Handle type="source" position={Position.Bottom} isConnectable={isConnectable} className="w-2 h-2 !bg-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <Handle type="source" position={Position.Right} id="right" isConnectable={isConnectable} className="w-2 h-2 !bg-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
     </>
   );

@@ -45,6 +45,7 @@ export default function BaseNode({ id, data, isConnectable, icon, containerClass
       </NodeToolbar>
       <div className={`flex items-center gap-3 px-4 py-3 shadow-md rounded-lg bg-white border-2 min-w-[180px] group transition-colors ${selected ? 'border-indigo-500 ring-4 ring-indigo-500/20' : `border-slate-200 ${containerClass}`}`}>
         <Handle type="target" position={Position.Top} isConnectable={isConnectable} className={`w-3 h-3 ${handleClass}`} />
+        <Handle type="target" position={Position.Left} id="left" isConnectable={isConnectable} className={`w-3 h-3 ${handleClass}`} />
         <div>
           {icon}
         </div>
@@ -59,6 +60,7 @@ export default function BaseNode({ id, data, isConnectable, icon, containerClass
           />
         </div>
         <Handle type="source" position={Position.Bottom} isConnectable={isConnectable} className={`w-3 h-3 ${handleClass}`} />
+        <Handle type="source" position={Position.Right} id="right" isConnectable={isConnectable} className={`w-3 h-3 ${handleClass}`} />
       </div>
     </>
   );
