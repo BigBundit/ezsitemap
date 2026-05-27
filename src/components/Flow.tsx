@@ -11,6 +11,7 @@ import {
   Node,
   getNodesBounds,
   getViewportForBounds,
+  MarkerType,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { toPng } from 'html-to-image';
@@ -303,6 +304,10 @@ export default function Flow() {
           ...params,
           type: 'bezier',
           style: { stroke: EDGE_COLORS[colorIndex], strokeWidth: 2 },
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: EDGE_COLORS[colorIndex],
+          },
         };
         return addEdge(newEdge, eds);
       });
@@ -476,6 +481,10 @@ export default function Flow() {
             target: item.id,
             type: 'bezier',
             style: { stroke: EDGE_COLORS[colorIndex], strokeWidth: 2 },
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              color: EDGE_COLORS[colorIndex],
+            },
           });
         }
       });
@@ -531,6 +540,10 @@ export default function Flow() {
           target: node.id,
           type: 'bezier',
           style: { stroke: EDGE_COLORS[index % EDGE_COLORS.length], strokeWidth: 2 },
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: EDGE_COLORS[index % EDGE_COLORS.length],
+          },
         }));
 
       const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(newNodes, newEdges, layoutDirection);
@@ -634,10 +647,11 @@ export default function Flow() {
             </button>
             <button
               onClick={() => setIsApiKeyModalOpen(true)}
-              className="flex items-center justify-center w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition-colors text-sm font-medium shadow-sm border border-slate-200"
               title="API Key Settings"
             >
               <Key className="w-4 h-4" />
+              API Key
             </button>
           </div>
         </div>
@@ -742,6 +756,10 @@ export default function Flow() {
             defaultEdgeOptions={{
               type: 'bezier',
               style: { stroke: '#475569', strokeWidth: 2 },
+              markerEnd: {
+                type: MarkerType.ArrowClosed,
+                color: '#475569',
+              },
             }}
           >
             <Controls />

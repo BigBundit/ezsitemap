@@ -2,8 +2,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 
 export async function generateSitemapFromUrl(url: string) {
   try {
-    const storedKey = localStorage.getItem('GEMINI_API_KEY');
-    const apiKey = storedKey || process.env.GEMINI_API_KEY;
+    const apiKey = localStorage.getItem('GEMINI_API_KEY');
     
     if (!apiKey || apiKey === 'undefined' || apiKey === 'null') {
       throw new Error("API_KEY_MISSING");
@@ -69,8 +68,7 @@ export async function generateSitemapFromUrl(url: string) {
 
 export async function generateSitemapFromText(text: string) {
   try {
-    const storedKey = localStorage.getItem('GEMINI_API_KEY');
-    const apiKey = storedKey || process.env.GEMINI_API_KEY;
+    const apiKey = localStorage.getItem('GEMINI_API_KEY');
     
     if (!apiKey || apiKey === 'undefined' || apiKey === 'null') {
       throw new Error("API_KEY_MISSING");
